@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Library Catalogue (CRUD)</title>
+    <link href="https://unpkg.com/bootstrap@3.4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/catalogue.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <h1>Catalogue List</h1>
+    <main id="app">
+        <router-view></router-view>
+    </main>
+</div>
+
+<template id="catalogue">
+    <div>
+        <h2>{{ catalogue.title }}</h2>
+        <b>Serial Number:</b>
+        <div>{{ catalogue.serialNum }}</div>
+        <b>Author: </b>
+        <div>{{ catalogue.author }}</div>
+        <b>Release Year:</b>
+        <div>{{ catalogue.releaseYear }}</div>
+        <b>Genre:</b>
+        <div>{{ catalogue.genre }}</div>
+        <br/>
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+        <a>
+            <router-link to="/">Back to Catalogue list</router-link>
+        </a>
+    </div>
+</template>
+
+<template id="catalogue-list">
+    <div>
+        <div class="actions">
+            <a class="btn btn-default">
+                <router-link :to="{path: '/add-catalogue'}">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Add catalogue
+                </router-link>
+            </a>
+        </div>
+        <div class="filters row">
+            <form @submit="filter">
+            <div class="form-group col-sm-3">
+                <input placeholder="Search" v-model="searchValue" class="form-control" id="search-element"/>
+            </div>
+            <div class="form-group col-sm-3">
+                <select v-model="searchKey" class="form-control" id="search-criteria">
+                    <option value="">Please select search criteria</option>
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                    <option value="releaseYear">Release Year</option>
+                    <option value="genre">Genre</option>
+                </select>
+            </div>
+                <button type="submit" class="btn btn-primary">Search/View All</button>
+            </form>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>SERIAL NUMBER</th>
+                <th>TITLE</th>
+                <th>AUTHOR</th>
+                <th>RELEASE YEAR</th>
+                <th>GENRE</th>
+                <th class="col-sm-2">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr  v-for="catalogue in filteredCatalogues">
+<!--            <tr v-for="catalogue in filteredCatalogues">-->
+                <!-- tr v-for="product in products" -->
+                <!-- tr v-for="product in products | filterBy searchKey in 'name'" -->
+                <td>
+                    <a>
+                        <router-link :to="{name: 'catalogue', params: {catalogue_id: catalogue.id}}">{{ catalogue.serialNum }}</router-link>
+                    </a>
+                </td>
+                <td>{{ catalogue.title }}</td>
+                <td>{{ catalogue.author }}</td>
+                <td>{{ catalogue.releaseYear }}</td>
+                <td>{{ catalogue.genre }}</td>
+                <td>
+<!--                    <a class="btn btn-warning btn-xs">-->
+<!--                        <router-link :to="{name: 'product-edit', params: {product_id: product.id}}">Edit</router-link>-->
+<!--                    </a>-->
+<!--                    <a class="btn btn-danger btn-xs">-->
+<!--                        <router-link :to="{name: 'product-delete', params: {product_id: product.id}}">Delete</router-link>-->
+<!--                    </a>-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+
+
+<template id="add-catalogue">
+    <div>
+        <h2>Add new catalogue</h2>
+        <form @submit="createCatalogue">
+            <div class="form-group">
+                <label for="add-serial-num">Serial Number</label>
+                <input class="form-control" id="add-serial-num" v-model="catalogue.serialNum" required/>
+            </div>
+            <div class="form-group">
+                <label for="add-title">Title</label>
+                <input class="form-control" id="add-title"  v-model="catalogue.title" required/>
+            </div>
+            <div class="form-group">
+                <label for="add-author">Author</label>
+                <input class="form-control" id="add-author"  v-model="catalogue.author" required/>
+            </div>
+            <div class="form-group">
+                <label for="add-genre">Genre</label>
+                <input class="form-control" id="add-genre"  v-model="catalogue.genre" required/>
+            </div>
+            <div class="form-group">
+                <label for="add-release-year">Release Year</label>
+                <input class="form-control" id="add-release-year"  v-model="catalogue.releaseYear" required/>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a class="btn btn-default">
+                <router-link to="/">Cancel</router-link>
+            </a>
+        </form>
+    </div>
+</template>
+
+<!--<template id="product-edit">-->
+<!--    <div>-->
+<!--        <h2>Edit product</h2>-->
+<!--        <form @submit="updateProduct">-->
+<!--            <div class="form-group">-->
+<!--                <label for="edit-name">Name</label>-->
+<!--                <input class="form-control" id="edit-name" v-model="product.name" required/>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label for="edit-description">Description</label>-->
+<!--                <textarea class="form-control" id="edit-description" rows="3" v-model="product.description"></textarea>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label for="edit-price">Price, <span class="glyphicon glyphicon-euro"></span></label>-->
+<!--                <input type="number" class="form-control" id="edit-price" v-model="product.price"/>-->
+<!--            </div>-->
+<!--            <button type="submit" class="btn btn-primary">Save</button>-->
+<!--            <a class="btn btn-default">-->
+<!--                <router-link to="/">Cancel</router-link>-->
+<!--            </a>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</template>-->
+
+<!--<template id="product-delete">-->
+<!--    <div>-->
+<!--        <h2>Delete product {{ product.name }}</h2>-->
+<!--        <form @submit="deleteProduct">-->
+<!--            <p>The action cannot be undone.</p>-->
+<!--            <button type="submit" class="btn btn-danger">Delete</button>-->
+<!--            <a class="btn btn-default">-->
+<!--                <router-link to="/">Cancel</router-link>-->
+<!--            </a>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</template>-->
+
+<!--<script src="https://unpkg.com/vue@2.5.22/dist/vue.js"></script>-->
+<!--<script src="https://unpkg.com/vue-router@3.0.2/dist/vue-router.js"></script>-->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="/catalogue.js" defer></script>
+</body>
+</html>
