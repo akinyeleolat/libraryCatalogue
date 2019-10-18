@@ -2,17 +2,17 @@
 
 let catalogues = [];
 
-// function findCatalogue (catalogueId) {
-//     return catalogues[findCatalogueKey(catalogueId)];
-// }
+function findCatalogue (catalogueId) {
+    return catalogues[findCatalogueKey(catalogueId)];
+}
 
-// function findCatalogueKey (catalogueId) {
-//     for (let key = 0; key < catalogues.length; key++) {
-//         if (catalogues[key].id == catalogueId) {
-//             return key;
-//         }
-//     }
-// }
+function findCatalogueKey (catalogueId) {
+    for (let key = 0; key < catalogues.length; key++) {
+        if (catalogues[key].id == catalogueId) {
+            return key;
+        }
+    }
+}
 
 const catalogueService = {
     findAll(fn) {
@@ -43,19 +43,19 @@ const catalogueService = {
             .catch(error => console.log(error))
     },
 
-    // update(id, product, fn) {
-    //     axios
-    //         .put('/api/v1/products/' + id, product)
-    //         .then(response => fn(response))
-    //         .catch(error => console.log(error))
-    // },
-    //
-    // deleteProduct(id, fn) {
-    //     axios
-    //         .delete('/api/v1/products/' + id)
-    //         .then(response => fn(response))
-    //         .catch(error => console.log(error))
-    // }
+    update(id, catalogue, fn) {
+        axios
+            .put('/api/v1/catalogues/' + id, catalogue)
+            .then(response =>fn(response))
+            .catch(error => console.log(error))
+    },
+
+    deleteCatalogue(id, fn) {
+        axios
+            .delete('/api/v1/catalogues/' + id)
+            .then(response => fn(response))
+            .catch(error => console.log(error))
+    }
 }
 
 const List = Vue.extend({
@@ -89,35 +89,35 @@ const Catalogue = Vue.extend({
     }
 });
 
-// var ProductEdit = Vue.extend({
-//     template: '#product-edit',
-//     data: function () {
-//         return {product: findProduct(this.$route.params.product_id)};
-//     },
-//     methods: {
-//         updateProduct: function () {
-//             productService.update(this.product.id, this.product, r => router.push('/'))
-//         }
-//     }
-// });
-//
-// var ProductDelete = Vue.extend({
-//     template: '#product-delete',
-//     data: function () {
-//         return {product: findProduct(this.$route.params.product_id)};
-//     },
-//     methods: {
-//         deleteProduct: function () {
-//             productService.deleteProduct(this.product.id, r => router.push('/'))
-//         }
-//     }
-// });
+const CatalogueEdit = Vue.extend({
+    template: '#catalogue-edit',
+    data: function () {
+        return {catalogue: findCatalogue(this.$route.params.catalogue_id)};
+    },
+    methods: {
+        updateCatalogue: function () {
+            catalogueService.update(this.catalogue.id, this.catalogue, r => router.push('/'))
+        }
+    }
+});
+
+const CatalogueDelete = Vue.extend({
+    template: '#catalogue-delete',
+    data: function () {
+        return {catalogue: findCatalogue(this.$route.params.catalogue_id)};
+    },
+    methods: {
+        deleteCatalogue: function () {
+            catalogueService.deleteCatalogue(this.catalogue.id, r => router.push('/'))
+        }
+    }
+});
 
 const AddCatalogue = Vue.extend({
     template: '#add-catalogue',
     data() {
         return {
-            catalogue: {title: '', author: '', releaseYear: 0, genre:''}
+            catalogue: {title: '', author: '', releaseYear: '', genre:''}
         }
     },
     methods: {
@@ -132,8 +132,8 @@ const router = new VueRouter({
         {path: '/', component: List},
         {path: '/catalogue/:catalogue_id', component: Catalogue, name: 'catalogue'},
         {path: '/add-catalogue', component: AddCatalogue},
-        // {path: '/product/:product_id/edit', component: ProductEdit, name: 'product-edit'},
-        // {path: '/product/:product_id/delete', component: ProductDelete, name: 'product-delete'}
+        {path: '/catalogue/:catalogue_id/edit', component: CatalogueEdit, name: 'catalogue-edit'},
+        {path: '/catalogue/:catalogue_id/delete', component: CatalogueDelete, name: 'catalogue-delete'}
     ]
 });
 

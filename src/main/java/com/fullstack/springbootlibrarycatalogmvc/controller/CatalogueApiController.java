@@ -11,6 +11,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -85,5 +88,53 @@ public class CatalogueApiController {
         else {
             return catalogueSearchRepository.advancedSearch(title, releaseYear, author, genre, page);
         }
+    }
+
+    /**
+     * Update catalogue response entity.
+     *
+     * @param id the catalogue id
+     * @param catalogueDetails the catalogue details
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
+    @PutMapping("api/v1/catalogues/{id}")
+    public ResponseEntity<Catalogue> updateCatalogue(
+            @PathVariable(value = "id") Long id, @Valid @RequestBody Catalogue catalogueDetails)
+            throws ResourceNotFoundException {
+
+        Catalogue editCatalogue =
+                catalogueRepository
+                        .findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Catalogue not found on :: " + id));
+
+        editCatalogue.setTitle(catalogueDetails.getTitle());
+        editCatalogue.setSerialNum(catalogueDetails.getSerialNum());
+        editCatalogue.setReleaseYear(catalogueDetails.getReleaseYear());
+        editCatalogue.setAuthor(catalogueDetails.getAuthor());
+        editCatalogue.setGenre(catalogueDetails.getGenre());
+        editCatalogue.setUpdatedAt(new Date());
+        final Catalogue updatedCatalogue = catalogueRepository.save(editCatalogue);
+        return ResponseEntity.ok(updatedCatalogue);
+    }
+
+    /**
+     * Delete catalogue map.
+     *
+     * @param id the catalogue id
+     * @return the map
+     * @throws Exception the exception
+     */
+    @DeleteMapping("api/v1/catalogues/{id}")
+    public Map<String, Boolean> deleteCatalogue(@PathVariable(value = "id") Long id) throws Exception {
+        Catalogue catalogue =
+                catalogueRepository
+                        .findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Catalogue not found on :: " + id));
+
+        catalogueRepository.delete(catalogue);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }
